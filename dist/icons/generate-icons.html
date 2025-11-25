@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StockMate Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #15803d;
+        }
+    </style>
+</head>
+<body>
+    <h1>StockMate PWA Icon Generator</h1>
+    <p>Click the buttons below to generate and download PWA icons.</p>
+    
+    <div>
+        <button onclick="generateIcon(192)">Generate 192x192 Icon</button>
+        <button onclick="generateIcon(512)">Generate 512x512 Icon</button>
+    </div>
+    
+    <div id="canvases"></div>
+
+    <script>
+        function generateIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#16a34a');
+            gradient.addColorStop(1, '#15803d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw box icon
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size / 20;
+            
+            // Box shape
+            const padding = size / 4;
+            const boxSize = size - (padding * 2);
+            const boxX = padding;
+            const boxY = padding + size / 10;
+            
+            // Draw box
+            ctx.beginPath();
+            ctx.moveTo(boxX, boxY);
+            ctx.lineTo(boxX + boxSize, boxY);
+            ctx.lineTo(boxX + boxSize, boxY + boxSize);
+            ctx.lineTo(boxX, boxY + boxSize);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Draw lid
+            ctx.beginPath();
+            ctx.moveTo(boxX, boxY);
+            ctx.lineTo(boxX + boxSize / 4, boxY - boxSize / 8);
+            ctx.lineTo(boxX + boxSize * 1.25, boxY - boxSize / 8);
+            ctx.lineTo(boxX + boxSize, boxY);
+            ctx.stroke();
+            
+            // Draw lines on box
+            ctx.beginPath();
+            ctx.moveTo(boxX + boxSize / 3, boxY);
+            ctx.lineTo(boxX + boxSize / 3, boxY + boxSize);
+            ctx.moveTo(boxX + boxSize * 2 / 3, boxY);
+            ctx.lineTo(boxX + boxSize * 2 / 3, boxY + boxSize);
+            ctx.stroke();
+            
+            // Display canvas
+            const container = document.getElementById('canvases');
+            const existing = container.querySelector(`canvas[data-size="${size}"]`);
+            if (existing) {
+                container.removeChild(existing);
+            }
+            canvas.setAttribute('data-size', size);
+            container.appendChild(canvas);
+            
+            // Download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+    </script>
+</body>
+</html>
+
