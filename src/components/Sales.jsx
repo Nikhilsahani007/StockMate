@@ -92,8 +92,13 @@ export default function Sales({ products, sales = [], loadData }) {
   })();
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Record Sale</h2>
+    <div className="space-y-6 lg:space-y-8 max-w-screen-2xl mx-auto">
+      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Record Sale</h2>
+          <p className="text-sm text-gray-500">Capture transactions with flexible pricing and instant stock updates</p>
+        </div>
+      </div>
 
       {message && (
         <div className={`p-4 rounded-lg ${message.includes('success') ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
@@ -101,16 +106,16 @@ export default function Sales({ products, sales = [], loadData }) {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-6 max-w-3xl">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-4 xs:p-5 lg:p-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Product
             </label>
             <select
               value={selectedProduct}
               onChange={(e) => setSelectedProduct(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-200"
               required
             >
               <option value="">Choose a product...</option>
@@ -127,7 +132,7 @@ export default function Sales({ products, sales = [], loadData }) {
             )}
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Quantity
             </label>
@@ -137,7 +142,7 @@ export default function Sales({ products, sales = [], loadData }) {
               max={selectedProduct ? products.find(p => p.id === parseInt(selectedProduct))?.stock : undefined}
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-200"
               required
               placeholder="Enter quantity"
             />
@@ -148,7 +153,7 @@ export default function Sales({ products, sales = [], loadData }) {
             )}
           </div>
 
-          <div>
+          <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Selling Price (per unit)
             </label>
@@ -158,7 +163,7 @@ export default function Sales({ products, sales = [], loadData }) {
               step="0.01"
               value={customPrice}
               onChange={(e) => setCustomPrice(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-200 disabled:bg-gray-100"
               placeholder="Enter selling price"
               required
               disabled={!selectedProductData}
@@ -181,18 +186,20 @@ export default function Sales({ products, sales = [], loadData }) {
             </div>
           )}
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700"
-          >
-            Record Sale
-          </button>
+          <div className="md:col-span-2">
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition"
+            >
+              Record Sale
+            </button>
+          </div>
         </form>
       </div>
 
       {/* Today's Sales Summary */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 p-4 xs:p-5 lg:p-6">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h3 className="text-lg font-semibold">Today's Sold Products</h3>
             <p className="text-sm text-gray-500">

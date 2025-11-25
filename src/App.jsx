@@ -80,7 +80,7 @@ export default function StockMate() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-green-600 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-4">
+        <div className="mx-auto w-full max-w-screen-2xl px-4 xs:px-5 sm:px-6 lg:px-8 py-4">
           <h1 className="text-2xl font-bold">📦 StockMate</h1>
           <p className="text-green-100 text-sm">Offline Inventory & Sales Management</p>
         </div>
@@ -88,8 +88,8 @@ export default function StockMate() {
 
       {/* Navigation */}
       <nav className="bg-white shadow">
-        <div className="container mx-auto px-4">
-          <div className="flex space-x-1 overflow-x-auto">
+        <div className="mx-auto w-full max-w-screen-2xl px-4 xs:px-5 sm:px-6 lg:px-8">
+          <div className="flex space-x-1 overflow-x-auto pb-1">
             <NavButton 
               icon={<BarChart3 size={18} />} 
               label="Dashboard" 
@@ -131,7 +131,7 @@ export default function StockMate() {
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="mx-auto w-full max-w-screen-2xl px-4 xs:px-5 sm:px-6 lg:px-8 py-6 lg:py-8">
         {renderPage()}
       </main>
     </div>
