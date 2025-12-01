@@ -6,27 +6,14 @@ export async function exportData() {
     const products = await dbOps.getAllProducts();
     const sales = await dbOps.getAllSales();
     
-    // Export settings
-    const settings = {};
-    try {
-      const lowStockThreshold = await dbOps.getSetting('lowStockThreshold');
-      if (lowStockThreshold !== undefined) {
-        settings.lowStockThreshold = lowStockThreshold;
-      }
-    } catch (err) {
-      console.warn('Could not export settings:', err);
-    }
-    
     const backup = {
       timestamp: new Date().toISOString(),
-      version: '1.0.0',
+      version: '1.0',
       appName: 'StockMate',
       products,
-      sales,
-      settings
+      sales
     };
 
-    // Create downloadable JSON file
     const blob = new Blob([JSON.stringify(backup, null, 2)], { 
       type: 'application/json' 
     });
@@ -51,42 +38,19 @@ export async function importData(file) {
     const text = await file.text();
     const data = JSON.parse(text);
 
-    // Validate backup structure
     if (!data.products || !data.sales) {
       throw new Error('Invalid backup file format');
     }
 
-    // Clear existing data
     await dbOps.clearStore('products');
     await dbOps.clearStore('sales');
 
-    // Import products
     for (const product of data.products) {
-      try {
-        await dbOps.addProduct(product);
-      } catch (err) {
-        console.warn('Error importing product:', product, err);
-      }
+      await dbOps.addProduct(product);
     }
 
-    // Import sales
     for (const sale of data.sales) {
-      try {
-        await dbOps.addSale(sale);
-      } catch (err) {
-        console.warn('Error importing sale:', sale, err);
-      }
-    }
-
-    // Import settings if available
-    if (data.settings) {
-      try {
-        if (data.settings.lowStockThreshold !== undefined) {
-          await dbOps.setSetting('lowStockThreshold', data.settings.lowStockThreshold);
-        }
-      } catch (err) {
-        console.warn('Error importing settings:', err);
-      }
+      await dbOps.addSale(sale);
     }
 
     return { success: true, message: 'Data imported successfully!' };

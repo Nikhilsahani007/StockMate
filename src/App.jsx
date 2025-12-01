@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Package, ShoppingCart, BarChart3, Download, Settings } from 'lucide-react';
+import { Package, ShoppingCart, BarChart3, Download, Menu, X } from 'lucide-react';
 import { initDB, dbOps } from './utils/db';
-import NavButton from './components/NavButton';
+import { NavButton, MobileNavButton, BottomNavButton } from './components/NavButton';
 import Dashboard from './components/Dashboard';
 import Products from './components/Products';
 import Sales from './components/Sales';
 import Reports from './components/Reports';
 import BackupRestore from './components/BackupRestore';
-import SettingsPage from './components/Settings';
 
 export default function StockMate() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     initDB().then(() => {
@@ -40,38 +40,24 @@ export default function StockMate() {
   const renderPage = () => {
     switch(currentPage) {
       case 'dashboard':
-        return (
-          <Dashboard
-            products={products}
-            sales={sales}
-            onNavigateToProducts={() => setCurrentPage('products')}
-          />
-        );
+        return <Dashboard products={products} sales={sales} />;
       case 'products':
         return <Products products={products} loadData={loadData} />;
       case 'sales':
-        return <Sales products={products} sales={sales} loadData={loadData} />;
+        return <Sales products={products} loadData={loadData} />;
       case 'reports':
         return <Reports sales={sales} products={products} />;
       case 'backup':
         return <BackupRestore loadData={loadData} />;
-      case 'settings':
-        return <SettingsPage loadData={loadData} />;
       default:
-        return (
-          <Dashboard
-            products={products}
-            sales={sales}
-            onNavigateToProducts={() => setCurrentPage('products')}
-          />
-        );
+        return <Dashboard products={products} sales={sales} />;
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-xl text-gray-600">Loading StockMate...</div>
+        <div className="text-lg text-gray-600">Loading StockMate...</div>
       </div>
     );
   }
@@ -79,17 +65,81 @@ export default function StockMate() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-green-600 text-white shadow-lg">
-        <div className="mx-auto w-full max-w-screen-2xl px-4 xs:px-5 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold">📦 StockMate</h1>
-          <p className="text-green-100 text-sm">Offline Inventory & Sales Management</p>
+      <header className="bg-green-600 text-white shadow-lg sticky top-0 z-40">
+        <div className="px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold">📦 StockMate</h1>
+              <p className="text-green-100 text-xs sm:text-sm hidden sm:block">
+                Offline Inventory & Sales Management
+              </p>
+            </div>
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-green-700"
+            >
+              <Menu size={24} />
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Navigation */}
-      <nav className="bg-white shadow">
-        <div className="mx-auto w-full max-w-screen-2xl px-4 xs:px-5 sm:px-6 lg:px-8">
-          <div className="flex space-x-1 overflow-x-auto pb-1">
+      {/* Mobile Navigation Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden" 
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div 
+            className="bg-white w-64 h-full shadow-lg p-4" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold">Menu</h2>
+              <button onClick={() => setMobileMenuOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+            <nav className="space-y-2">
+              <MobileNavButton 
+                icon={<BarChart3 size={20} />} 
+                label="Dashboard" 
+                active={currentPage === 'dashboard'} 
+                onClick={() => { setCurrentPage('dashboard'); setMobileMenuOpen(false); }} 
+              />
+              <MobileNavButton 
+                icon={<Package size={20} />} 
+                label="Products" 
+                active={currentPage === 'products'} 
+                onClick={() => { setCurrentPage('products'); setMobileMenuOpen(false); }} 
+              />
+              <MobileNavButton 
+                icon={<ShoppingCart size={20} />} 
+                label="Sales" 
+                active={currentPage === 'sales'} 
+                onClick={() => { setCurrentPage('sales'); setMobileMenuOpen(false); }} 
+              />
+              <MobileNavButton 
+                icon={<BarChart3 size={20} />} 
+                label="Reports" 
+                active={currentPage === 'reports'} 
+                onClick={() => { setCurrentPage('reports'); setMobileMenuOpen(false); }} 
+              />
+              <MobileNavButton 
+                icon={<Download size={20} />} 
+                label="Backup" 
+                active={currentPage === 'backup'} 
+                onClick={() => { setCurrentPage('backup'); setMobileMenuOpen(false); }} 
+              />
+            </nav>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Navigation */}
+      <nav className="bg-white shadow hidden lg:block sticky top-16 z-30">
+        <div className="px-4">
+          <div className="flex space-x-1 overflow-x-auto">
             <NavButton 
               icon={<BarChart3 size={18} />} 
               label="Dashboard" 
@@ -120,18 +170,48 @@ export default function StockMate() {
               active={currentPage === 'backup'} 
               onClick={() => setCurrentPage('backup')} 
             />
-            <NavButton 
-              icon={<Settings size={18} />} 
-              label="Settings" 
-              active={currentPage === 'settings'} 
-              onClick={() => setCurrentPage('settings')} 
-            />
           </div>
         </div>
       </nav>
 
+      {/* Bottom Navigation for Mobile */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+        <div className="flex justify-around">
+          <BottomNavButton 
+            icon={<BarChart3 size={20} />} 
+            label="Dashboard" 
+            active={currentPage === 'dashboard'} 
+            onClick={() => setCurrentPage('dashboard')} 
+          />
+          <BottomNavButton 
+            icon={<Package size={20} />} 
+            label="Products" 
+            active={currentPage === 'products'} 
+            onClick={() => setCurrentPage('products')} 
+          />
+          <BottomNavButton 
+            icon={<ShoppingCart size={20} />} 
+            label="Sales" 
+            active={currentPage === 'sales'} 
+            onClick={() => setCurrentPage('sales')} 
+          />
+          <BottomNavButton 
+            icon={<BarChart3 size={20} />} 
+            label="Reports" 
+            active={currentPage === 'reports'} 
+            onClick={() => setCurrentPage('reports')} 
+          />
+          <BottomNavButton 
+            icon={<Download size={20} />} 
+            label="More" 
+            active={currentPage === 'backup'} 
+            onClick={() => setCurrentPage('backup')} 
+          />
+        </div>
+      </nav>
+
       {/* Main Content */}
-      <main className="mx-auto w-full max-w-screen-2xl px-4 xs:px-5 sm:px-6 lg:px-8 py-6 lg:py-8">
+      <main className="px-3 sm:px-4 lg:px-6 py-4 pb-20 lg:pb-6 max-w-7xl mx-auto">
         {renderPage()}
       </main>
     </div>
