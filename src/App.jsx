@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, ShoppingCart, BarChart3, Download, Menu, X } from 'lucide-react';
+import { Package, ShoppingCart, BarChart3, Download, Menu, X, Settings as SettingsIcon } from 'lucide-react';
 import { initDB, dbOps } from './utils/db';
 import { NavButton, MobileNavButton, BottomNavButton } from './components/NavButton';
 import Dashboard from './components/Dashboard';
@@ -7,6 +7,8 @@ import Products from './components/Products';
 import Sales from './components/Sales';
 import Reports from './components/Reports';
 import BackupRestore from './components/BackupRestore';
+import SettingsPage from './components/Settings';
+
 
 export default function StockMate() {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -49,6 +51,8 @@ export default function StockMate() {
         return <Reports sales={sales} products={products} />;
       case 'backup':
         return <BackupRestore loadData={loadData} />;
+       case 'settings':
+  return <SettingsPage loadData={loadData} />; 
       default:
         return <Dashboard products={products} sales={sales} />;
     }
@@ -131,6 +135,12 @@ export default function StockMate() {
                 active={currentPage === 'backup'} 
                 onClick={() => { setCurrentPage('backup'); setMobileMenuOpen(false); }} 
               />
+              <MobileNavButton 
+ icon={<SettingsIcon size={20} />} 
+                label="Settings" 
+                active={currentPage === 'settings'} 
+                onClick={() => { setCurrentPage('settings'); setMobileMenuOpen(false); }}  
+/>
             </nav>
           </div>
         </div>
@@ -170,6 +180,12 @@ export default function StockMate() {
               active={currentPage === 'backup'} 
               onClick={() => setCurrentPage('backup')} 
             />
+             <NavButton 
+  icon={<SettingsIcon size={18} />} 
+  label="Settings" 
+  active={currentPage === 'settings'} 
+  onClick={() => setCurrentPage('settings')} 
+/>
           </div>
         </div>
       </nav>
@@ -207,6 +223,7 @@ export default function StockMate() {
             active={currentPage === 'backup'} 
             onClick={() => setCurrentPage('backup')} 
           />
+        
         </div>
       </nav>
 
